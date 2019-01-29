@@ -12,26 +12,25 @@
 #include <unistd.h>
 #include <sys/stat.h> // umask
 
+#include <syslog.h>
+
 int pea_daem(){
       pid_t pid, sid;
       pid = fork();
       if(pid < 0)exit(EXIT_FAILURE);
       // parent is killed
       if(pid > 0)exit(EXIT_SUCCESS);
-      // for linux
       umask(0);
-      FILE* logfp = fopen("/var/log/pea_log.log", "a");
-      fprintf(logfp, "PET daemon started at pid: %i\n", pid);
+      openlog("pea", LOG_PID, LOG_USER);
+      syslog(LOG_INFO, "PEA daemon started at pid: %i\n", pid);
       // make new SID for child proc
       sid = setsid();
       if(sid < 0){
-            fputs("failed to create new SID\n", logfp);
-            fclose(logfp);
+            syslog(LOG_ERR, "failed to create new SID\n") ;
             exit(EXIT_FAILURE);
       }
       if((chdir("/")) < 0){
-            fputs("failed to cd /\n", logfp);
-            fclose(logfp);
+            syslog(LOG_ERR, "failed to chdir(\"/\")\n");
             exit(EXIT_FAILURE);
       }
       close(STDIN_FILENO);
@@ -43,10 +42,9 @@ int pea_daem(){
       while(1){
             usleep(1000);
       }
-      fclose(logfp);
-      return 1;
+      return 0;
 }
 
 int main(){
-      pea_daem();
+      return pea_daem();
 }
