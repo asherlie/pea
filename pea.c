@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include <sys/stat.h> // umask
 
-#include <sys/socket.h>
 #include <signal.h>
 
 #include <syslog.h>
@@ -55,11 +54,6 @@ int pea_daem(){
 
       /* we're now a ~~daemon~~ */
 
-      // setting up a socket to accept connections
-      int sock = socket(AF_INET, SOCK_STREAM, 0);
-      /* signals should be required to get attention before any data is sent through sockets
-       * they will be sent using sigqueue with int macros LIST_PET, SIGN_PET, CREATE_PET
-       */
       struct sigaction action;
       action.sa_flags = SA_SIGINFO;
       action.sa_sigaction = &signal_handler;

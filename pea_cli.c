@@ -35,9 +35,6 @@ int main(int argc, char** argv){
       }
       // sign and create both require 2 args
       if(argc < 3)return 1;
-      char uname[10];
-      uname[9] = 0;
-      getlogin_r(uname, 9);
       // sign petition
       if(*argv[1] == 's'){
             // TODO: use my strtoi and make this safer
