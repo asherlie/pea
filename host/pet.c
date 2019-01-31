@@ -37,7 +37,10 @@ _Bool insert_p(struct petition* p, struct petition_container* pc){
 
 /* signature management */
 
-void add_signature(struct petition* p, int u_id){
+// returns addition success
+_Bool add_signature(struct petition* p, int u_id){
+      for(int i = 0; i < p->n; ++i)
+            if(u_id == p->signatures[i])return 0;
       if(p->n == p->cap){
             p->cap *= 2;
             int* tmp_sig = malloc(sizeof(int)*p->cap);
@@ -46,4 +49,5 @@ void add_signature(struct petition* p, int u_id){
             p->signatures = tmp_sig;
       }
       p->signatures[p->n++] = u_id;
+      return 1;
 }

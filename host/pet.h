@@ -1,3 +1,11 @@
+/*
+ * petitions are unlabeled
+ * a list of labeled petitions should be distrubuted
+ * separately in a mailing list
+ * petitions are referred to within the PEA ecosystem 
+ * by their index within the petition_container
+ */
+
 struct petition{
       int n, cap;
       int* signatures;
@@ -15,4 +23,4 @@ _Bool insert_p(struct petition* p, struct petition_container* pc);
 
 /* signature management */
 
-void add_signature(struct petition* p, int u_id);
+_Bool add_signature(struct petition* p, int u_id);

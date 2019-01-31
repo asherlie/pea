@@ -25,22 +25,26 @@
 struct petition_container* pc;
 
 void signal_handler(int signum, siginfo_t* info, void* extra){
-      int operation = info->si_value.sival_int;
+      int packed_int = info->si_value.sival_int;
+      int operation = packed_int & 0xffff;
+      int pet_num = (packed_int >> 16) & 0xffff;
       FILE* fp = fopen("/home/asher/boybo", "a");
-      fprintf(fp, "sig num: %i, received int: %i from user: %i\n", signum,  operation, info->si_uid);
+      fprintf(fp, "sig num: %i, received int: %i on pet num %i from user: %i\n", signum,  operation, pet_num, info->si_uid);
       fclose(fp);
       switch(operation){
             // TODO: implement this
             case LIST_PET:
                   break;
             case SIGN_PET:
-                  // TODO: client needs to communicate which signature they'd like to sign
-                  /*add_signature();*/
+                  add_signature(pc->petitions[pet_num], info->si_uid);
+                  fprintf(fp, "signature from user: %i added to petition %i\n", info->si_uid, pet_num);
                   break;
             case CREATE_PET:
                   insert_p(alloc_p(), pc);
+                  fprintf(fp, "new petition created by user: %i\n", info->si_uid);
                   break;
       }
+      /*fclose(fp);*/
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
