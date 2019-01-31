@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 /*
  * petitions are unlabeled
  * a list of labeled petitions should be distrubuted
@@ -24,3 +26,4 @@ _Bool insert_p(struct petition* p, struct petition_container* pc);
 /* signature management */
 
 _Bool add_signature(struct petition* p, int u_id);
+int print_sigs(FILE* fp, struct petition_container* pc);

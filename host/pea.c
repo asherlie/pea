@@ -38,6 +38,7 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
             case LIST_PET:
                   break;
             case SIGN_PET:
+                  if(pc->n <= pet_num)break;
                   add_signature(pc->petitions[pet_num], info->si_uid);
                   #if DEBUG
                   printf("signature from user: %i added to petition %i\n", info->si_uid, pet_num);
@@ -50,6 +51,9 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
                   #endif
                   break;
       }
+      #if DEBUG
+      print_sigs(stdout, pc);
+      #endif
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog

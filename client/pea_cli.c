@@ -39,20 +39,20 @@ int main(int argc, char** argv){
       if(*argv[2] == 'l'){
             return 0;
       }
-      // sign and create both require 2 args
+      pid_t pid = atoi(argv[1]);
+      // create petition
+      if(*argv[2] == 'c'){
+            send_sig(pid, CREATE_PET, 0);
+            return 0;
+      }
+      // sign requires 2 args
       if(argc < 4)return 1;
       // TODO: use my strtoi and make this safer
       // bound checking, etc.
-      pid_t pid = atoi(argv[1]);
       // sign petition
       if(*argv[2] == 's'){
             int pet_num = atoi(argv[3]);
             sign_petition(pid, pet_num);
-            return 0;
-      }
-      // create petition
-      if(*argv[1] == 'c'){
-            send_sig(pid, CREATE_PET, 0);
             return 0;
       }
       return 0;

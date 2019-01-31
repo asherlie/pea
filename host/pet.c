@@ -51,3 +51,14 @@ _Bool add_signature(struct petition* p, int u_id){
       p->signatures[p->n++] = u_id;
       return 1;
 }
+
+int print_sigs(FILE* fp, struct petition_container* pc){
+      int total_sigs = 0;
+      for(int i = 0; i < pc->n; ++i){
+            total_sigs += pc->petitions[i]->n;
+            fprintf(fp, "petition #%i:\n", i);
+            for(int j = 0; j < pc->petitions[i]->n; ++j)
+                  fprintf(fp, "  %i: %i\n", j, pc->petitions[i]->signatures[j]);
+      }
+      return total_sigs;
+}
