@@ -20,13 +20,21 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
-// borrowed from github
+struct petition{
+      int n, cap;
+      int* signatures;
+};
+
+struct petition_container{
+      int n, cap;
+      struct petition* petitions;
+};
+
 void signal_handler(int signum, siginfo_t* info, void* extra){
       int operation = info->si_value.sival_int;
       FILE* fp = fopen("/home/asher/boybo", "a");
-      fprintf(fp, "sig num: %i, received int: %i\n", signum,  operation);
+      fprintf(fp, "sig num: %i, received int: %i from user: %i\n", signum,  operation, info->si_uid);
       fclose(fp);
-      /*return (operation > 2 || operation < 0) operation;*/
 }
 
 int pea_daem(){
