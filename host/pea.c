@@ -37,7 +37,6 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
       FILE* fp = NULL;
       switch(operation){
             case LIST_PET:
-                  // TODO: check for bad fopen
                   fp = (DEBUG) ? stdout : fopen(pet_f_pth, "w");
                   print_sigs(fp, pc);
                   #if !DEBUG
@@ -110,6 +109,7 @@ int main(int argc, char** argv){
             return 1;
       }
       pet_f_pth = argv[1];
+      // why open a useless file in case of DEBUG
       FILE* tst_fp = fopen(pet_f_pth, "w");
       if(!tst_fp){
             puts("enter a valid file path");

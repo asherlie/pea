@@ -21,7 +21,6 @@ int send_sig(pid_t pid, int pet_opt, int ref_num){
 }
 
 _Bool sign_petition(pid_t pid, int pet_num){
-      /*return send_sig(pid, pack_int(SIGN_PET, pet_num));*/
       return send_sig(pid, SIGN_PET, pet_num);
 }
 
@@ -68,5 +67,6 @@ int main(int argc, char** argv){
             sign_petition(pid, pet_num);
             return 0;
       }
+      p_usage(*argv);
       return 0;
 }
