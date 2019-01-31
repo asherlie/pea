@@ -33,8 +33,17 @@ _Bool sign_petition(pid_t pid, int pet_num){
  *
  */
 
+void p_usage(char* a){
+      printf("usage:\n  %s [pid] \"list\" - lists available petitions\
+               \n  %s [pid] \"sign\" [list_item] - signs petition\
+               \n  %s [pid] \"create\" - creates new petition\n", a, a, a);
+}
+
 int main(int argc, char** argv){
-      if(argc < 3)return 1;
+      if(argc < 3){
+            p_usage(*argv);
+            return 1;
+      }
       pid_t pid = atoi(argv[1]);
       // list petitions to outfile
       if(*argv[2] == 'l'){
@@ -47,7 +56,10 @@ int main(int argc, char** argv){
             return 0;
       }
       // sign requires 2 args
-      if(argc < 4)return 1;
+      if(argc < 4){
+            p_usage(*argv);
+            return 1;
+      }
       // TODO: use my strtoi and make this safer
       // bound checking, etc.
       // sign petition
