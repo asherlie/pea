@@ -52,7 +52,7 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
                   #endif
                   break;
             case CREATE_PET:
-                  insert_p(alloc_p(), pc);
+                  insert_p(alloc_p(), pc, info->si_uid);
                   #if DEBUG
                   printf("new petition created by user: %i\n", info->si_uid);
                   #endif

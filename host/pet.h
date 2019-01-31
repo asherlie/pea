@@ -9,7 +9,7 @@
  */
 
 struct petition{
-      int n, cap;
+      int n, cap, creator;
       int* signatures;
 };
 
@@ -21,7 +21,7 @@ struct petition_container{
 void init_pc(struct petition_container* pc);
 void init_p(struct petition* p);
 struct petition* alloc_p();
-_Bool insert_p(struct petition* p, struct petition_container* pc);
+_Bool insert_p(struct petition* p, struct petition_container* pc, int creator);
 
 /* signature management */
 
