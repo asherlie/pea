@@ -17,7 +17,7 @@ int pack_int(int x, int y){
 int send_sig(pid_t pid, int pet_opt, int ref_num){
       union sigval val;
       val.sival_int = pack_int(pet_opt, ref_num);
-      return sigqueue(pid, SIGHUP, val) == 0;
+      return sigqueue(pid, SIGUSR1, val) == 0;
 }
 
 _Bool sign_petition(pid_t pid, int pet_num){

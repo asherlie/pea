@@ -92,7 +92,7 @@ int pea_daem(_Bool debug_mode){
       struct sigaction action;
       action.sa_flags = SA_SIGINFO;
       action.sa_sigaction = &signal_handler;
-      if(sigaction(SIGHUP, &action, NULL) == -1){
+      if(sigaction(SIGUSR1, &action, NULL) == -1){
             syslog(LOG_ERR, "sigaction failed\n");
             exit(EXIT_FAILURE);
       }
