@@ -97,6 +97,7 @@ int pea_daem(_Bool debug_mode){
             exit(EXIT_FAILURE);
       }
       while(1){
+            /*pause();*/
             usleep(1000);
       }
       return 0;
@@ -109,6 +110,12 @@ int main(int argc, char** argv){
             return 1;
       }
       pet_f_pth = argv[1];
+      FILE* tst_fp = fopen(pet_f_pth, "w");
+      if(!tst_fp){
+            puts("enter a valid file path");
+            return 1;
+      }
+      fclose(tst_fp);
       pc = malloc(sizeof(struct petition_container));
       init_pc(pc);
       return pea_daem(DEBUG);
