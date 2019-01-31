@@ -16,19 +16,11 @@
 
 #include <syslog.h>
 
+#include "pet.h"
+
 #define LIST_PET   0
 #define SIGN_PET   1
 #define CREATE_PET 2
-
-struct petition{
-      int n, cap;
-      int* signatures;
-};
-
-struct petition_container{
-      int n, cap;
-      struct petition* petitions;
-};
 
 void signal_handler(int signum, siginfo_t* info, void* extra){
       int operation = info->si_value.sival_int;
@@ -37,7 +29,8 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
       fclose(fp);
 }
 
-int pea_daem(){
+// TODO: if debug_mode, do not fork and print rather than syslog
+int pea_daem(_Bool debug_mode){
       pid_t pid, sid;
       pid = fork();
       if(pid < 0)exit(EXIT_FAILURE);
@@ -77,5 +70,5 @@ int pea_daem(){
 }
 
 int main(){
-      return pea_daem();
+      return pea_daem(0);
 }
