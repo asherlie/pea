@@ -21,8 +21,10 @@ struct petition* alloc_p(){
 }
 
 // inserts petition into petition container
+// returns whether or not pc has been resized
 _Bool insert_p(struct petition* p, struct petition_container* pc){
-      if(pc->n == pc->cap){
+      _Bool ret;
+      if((ret = pc->n == pc->cap)){
             pc->cap *= 2;
             struct petition** tmp_pet = malloc(sizeof(struct petition*)*pc->cap);
             memcpy(tmp_pet, pc->petitions, sizeof(struct petition*)*pc->n);
@@ -30,4 +32,5 @@ _Bool insert_p(struct petition* p, struct petition_container* pc){
             pc->petitions = tmp_pet;
       }
       pc->petitions[pc->n++] = p;
+      return ret;
 }
