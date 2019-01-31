@@ -27,7 +27,12 @@
 char* pet_f_pth = NULL;
 struct petition_container* pc;
 
-void signal_handler(int signum, siginfo_t* info, void* extra){
+void signal_handler(int signum, siginfo_t* info, void* place_hld){
+      /* silencing unused param warnings
+       * these cannot be removed from signal_handler because &signal_handler's
+       * type signature must match struct sigaction.sa_sigaction
+       */
+      (void)signum; (void)place_hld;
       int packed_int = info->si_value.sival_int;
       int operation = packed_int & 0xffff;
       int pet_num = (packed_int >> 16) & 0xffff;
@@ -57,7 +62,6 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
                   #endif
                   break;
       }
-      /*print_sigs(sig_print_fp, pc);*/
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
