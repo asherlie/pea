@@ -34,3 +34,16 @@ _Bool insert_p(struct petition* p, struct petition_container* pc){
       pc->petitions[pc->n++] = p;
       return ret;
 }
+
+/* signature management */
+
+void add_signature(struct petition* p, int u_id){
+      if(p->n == p->cap){
+            p->cap *= 2;
+            int* tmp_sig = malloc(sizeof(int)*p->cap);
+            memcpy(tmp_sig, p->signatures, sizeof(int)*p->n);
+            free(p->signatures);
+            p->signatures = tmp_sig;
+      }
+      p->signatures[p->n++] = u_id;
+}

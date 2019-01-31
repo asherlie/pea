@@ -22,11 +22,25 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
+struct petition_container* pc;
+
 void signal_handler(int signum, siginfo_t* info, void* extra){
       int operation = info->si_value.sival_int;
       FILE* fp = fopen("/home/asher/boybo", "a");
       fprintf(fp, "sig num: %i, received int: %i from user: %i\n", signum,  operation, info->si_uid);
       fclose(fp);
+      switch(operation){
+            // TODO: implement this
+            case LIST_PET:
+                  break;
+            case SIGN_PET:
+                  // TODO: client needs to communicate which signature they'd like to sign
+                  /*add_signature();*/
+                  break;
+            case CREATE_PET:
+                  insert_p(alloc_p(), pc);
+                  break;
+      }
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
@@ -71,5 +85,7 @@ int pea_daem(_Bool debug_mode){
 }
 
 int main(){
+      pc = malloc(sizeof(struct petition_container));
+      init_pc(pc);
       return pea_daem(0);
 }
