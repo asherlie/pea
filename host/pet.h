@@ -5,7 +5,7 @@ struct petition{
 
 struct petition_container{
       int n, cap;
-      struct petition* petitions;
+      struct petition** petitions;
 };
 
 void init_pc(struct petition_container* pc);

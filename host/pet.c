@@ -1,5 +1,6 @@
 #include "pet.h"
 #include <stdlib.h>
+#include <string.h> // memcpy
 
 void init_pc(struct petition_container* pc){
       pc->n = 0;
@@ -17,4 +18,16 @@ struct petition* alloc_p(){
       struct petition* pet = malloc(sizeof(struct petition));
       init_p(pet);
       return pet;
+}
+
+// inserts petition into petition container
+_Bool insert_p(struct petition* p, struct petition_container* pc){
+      if(pc->n == pc->cap){
+            pc->cap *= 2;
+            struct petition** tmp_pet = malloc(sizeof(struct petition*)*pc->cap);
+            memcpy(tmp_pet, pc->petitions, sizeof(struct petition*)*pc->n);
+            free(pc->petitions);
+            pc->petitions = tmp_pet;
+      }
+      pc->petitions[pc->n++] = p;
 }
