@@ -22,29 +22,34 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
+#define DEBUG 1
+
 struct petition_container* pc;
 
 void signal_handler(int signum, siginfo_t* info, void* extra){
       int packed_int = info->si_value.sival_int;
       int operation = packed_int & 0xffff;
       int pet_num = (packed_int >> 16) & 0xffff;
-      FILE* fp = fopen("/home/asher/boybo", "a");
-      fprintf(fp, "sig num: %i, received int: %i on pet num %i from user: %i\n", signum,  operation, pet_num, info->si_uid);
-      fclose(fp);
+      #if DEBUG
+      printf("signal: %i received int: %i on petition number: %i from user: %i\n", signum, operation, pet_num, info->si_uid);
+      #endif
       switch(operation){
             // TODO: implement this
             case LIST_PET:
                   break;
             case SIGN_PET:
                   add_signature(pc->petitions[pet_num], info->si_uid);
-                  fprintf(fp, "signature from user: %i added to petition %i\n", info->si_uid, pet_num);
+                  #if DEBUG
+                  printf("signature from user: %i added to petition %i\n", info->si_uid, pet_num);
+                  #endif
                   break;
             case CREATE_PET:
                   insert_p(alloc_p(), pc);
-                  fprintf(fp, "new petition created by user: %i\n", info->si_uid);
+                  #if DEBUG
+                  printf("new petition created by user: %i\n", info->si_uid);
+                  #endif
                   break;
       }
-      /*fclose(fp);*/
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
@@ -91,5 +96,5 @@ int pea_daem(_Bool debug_mode){
 int main(){
       pc = malloc(sizeof(struct petition_container));
       init_pc(pc);
-      return pea_daem(0);
+      return pea_daem(DEBUG);
 }
