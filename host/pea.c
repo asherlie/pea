@@ -22,8 +22,9 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
-#define DEBUG 1
+#define DEBUG 0
 
+char* pet_f_pth = NULL;
 struct petition_container* pc;
 
 void signal_handler(int signum, siginfo_t* info, void* extra){
@@ -33,9 +34,15 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
       #if DEBUG
       printf("signal: %i received int: %i on petition number: %i from user: %i\n", signum, operation, pet_num, info->si_uid);
       #endif
+      FILE* fp = NULL;
       switch(operation){
-            // TODO: implement this
             case LIST_PET:
+                  // TODO: check for bad fopen
+                  fp = (DEBUG) ? stdout : fopen(pet_f_pth, "w");
+                  print_sigs(fp, pc);
+                  #if !DEBUG
+                  fclose(fp);
+                  #endif
                   break;
             case SIGN_PET:
                   if(pc->n <= pet_num)break;
@@ -51,9 +58,7 @@ void signal_handler(int signum, siginfo_t* info, void* extra){
                   #endif
                   break;
       }
-      #if DEBUG
-      print_sigs(stdout, pc);
-      #endif
+      /*print_sigs(sig_print_fp, pc);*/
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
@@ -97,7 +102,13 @@ int pea_daem(_Bool debug_mode){
       return 0;
 }
 
-int main(){
+// argv[1] should contain a petition output file
+int main(int argc, char** argv){
+      if(argc < 2){
+            printf("usage: %s [petition output file]\n", *argv);
+            return 1;
+      }
+      pet_f_pth = argv[1];
       pc = malloc(sizeof(struct petition_container));
       init_pc(pc);
       return pea_daem(DEBUG);

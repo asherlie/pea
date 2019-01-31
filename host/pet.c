@@ -52,6 +52,7 @@ _Bool add_signature(struct petition* p, int u_id){
       return 1;
 }
 
+// if fp is anything but stdout, it must be closed after print_sigs is called
 int print_sigs(FILE* fp, struct petition_container* pc){
       int total_sigs = 0;
       for(int i = 0; i < pc->n; ++i){

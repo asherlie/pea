@@ -35,11 +35,12 @@ _Bool sign_petition(pid_t pid, int pet_num){
 
 int main(int argc, char** argv){
       if(argc < 3)return 1;
-      // list
+      pid_t pid = atoi(argv[1]);
+      // list petitions to outfile
       if(*argv[2] == 'l'){
+            send_sig(pid, LIST_PET, 0);
             return 0;
       }
-      pid_t pid = atoi(argv[1]);
       // create petition
       if(*argv[2] == 'c'){
             send_sig(pid, CREATE_PET, 0);
