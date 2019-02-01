@@ -26,8 +26,8 @@ _Bool sign_petition(pid_t pid, int pet_num){
 
 /*
  * usage:
- *   ./pea pid list // list available petitions
- *   ./pea pid sign list_item // sign petition
+ *   ./pea pid list                 // list available petitions
+ *   ./pea pid sign list_item       // sign petition
  *   ./pea pid create petition_name // create new petition
  *
  */

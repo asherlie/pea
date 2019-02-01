@@ -22,7 +22,7 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
-#define DEBUG 0
+#define DEBUG 1
 
 char* pet_f_pth = NULL;
 struct petition_container* pc;
@@ -114,6 +114,8 @@ int main(int argc, char** argv){
       }
       pet_f_pth = argv[1];
       // why open a useless file in case of DEBUG
+      // TODO: unless a full path is provided this is not a strict enough check
+      // this is due to chdir("/") in pea_daem
       FILE* tst_fp = fopen(pet_f_pth, "w");
       if(!tst_fp){
             puts("enter a valid file path");
