@@ -5,14 +5,23 @@
  * Enables
  * Amendment
  *
+ * OR
+ *
+ * Pea
+ * Expresses
+ * Annoyance
+ *
  */
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/stat.h> // umask
 
-#include <signal.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #include <syslog.h>
 
@@ -27,18 +36,19 @@
 char* pet_f_pth = NULL;
 struct petition_container* pc;
 
-void signal_handler(int signum, siginfo_t* info, void* place_hld){
-      /* silencing unused param warnings
-       * these cannot be removed from signal_handler because &signal_handler's
-       * type signature must match struct sigaction.sa_sigaction
-       */
-      (void)signum; (void)place_hld;
-      int packed_int = info->si_value.sival_int;
+// pet_handler handles LIST_PET, SIGN_PET, and CREATE_PET
+// LIST_PET can be performed without credentials
+int pet_handler(int p_sock, int packed_int){
+      socklen_t len = sizeof(struct ucred);
+      struct ucred cred;
+      memset(&cred, 0, sizeof(struct ucred));
+      getsockopt(p_sock, SOL_SOCKET, SO_PEERCRED, &cred, &len);
+
+      // splitting our packed int
       int operation = packed_int & 0xffff;
       int pet_num = (packed_int >> 16) & 0xffff;
-      #if DEBUG
-      printf("signal: %i received int: %i on petition number: %i from user: %i\n", signum, operation, pet_num, info->si_uid);
-      #endif
+      
+      // for petition writing
       FILE* fp = NULL;
       switch(operation){
             case LIST_PET:
@@ -50,22 +60,23 @@ void signal_handler(int signum, siginfo_t* info, void* place_hld){
                   break;
             case SIGN_PET:
                   if(pc->n <= pet_num)break;
-                  add_signature(pc->petitions[pet_num], info->si_uid);
+                  add_signature(pc->petitions[pet_num], cred.uid);
                   #if DEBUG
-                  printf("signature from user: %i added to petition %i\n", info->si_uid, pet_num);
+                  printf("signature from user: %i added to petition %i\n", cred.uid, pet_num);
                   #endif
                   break;
             case CREATE_PET:
-                  insert_p(alloc_p(), pc, info->si_uid);
+                  insert_p(alloc_p(), pc, cred.uid);
                   #if DEBUG
-                  printf("new petition created by user: %i\n", info->si_uid);
+                  printf("new petition created by user: %i\n", cred.uid);
                   #endif
                   break;
       }
+      return 0;
 }
 
 // TODO: if debug_mode, do not fork and print rather than syslog
-int pea_daem(_Bool debug_mode){
+int pea_daem(int local_sock, _Bool debug_mode){
       pid_t pid, sid;
       if(!debug_mode){
             pid = fork();
@@ -92,27 +103,45 @@ int pea_daem(_Bool debug_mode){
 
       /* we're now a ~~daemon~~ */
 
-      struct sigaction action;
-      action.sa_flags = SA_SIGINFO;
-      action.sa_sigaction = &signal_handler;
-      if(sigaction(SIGUSR1, &action, NULL) == -1){
-            syslog(LOG_ERR, "sigaction failed\n");
-            exit(EXIT_FAILURE);
-      }
+      int peer_sock = -1;
       while(1){
             /*pause();*/
-            usleep(1000);
+            /*usleep(1000);*/
+            // TODO: destroy socket at the end of this while loop
+            // to ensure that nobody stays connected
+            int packed_int = -1;
+            peer_sock = accept(local_sock, NULL, NULL);
+            read(peer_sock, &packed_int, sizeof(int));
+            pet_handler(peer_sock, packed_int);
+            peer_sock = -1;
       }
       return 0;
 }
 
-// argv[1] should contain a petition output file
+// TODO: check for bad socket, bind, listen (-1)
+int sock_init(char* path){
+      struct sockaddr_un addr;
+      memset(&addr, 0, sizeof(struct sockaddr_un));
+      addr.sun_family = AF_UNIX; 
+      strcpy(addr.sun_path, path);
+
+      int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+      bind(sock, (struct sockaddr*)&addr, SUN_LEN(&addr));
+      chmod(addr.sun_path, 0777);
+      listen(sock, 0);
+      return sock;
+}
+
+/*
+ * argv[1] contains the path to a socket location
+ * argv[2] contains a petition output file
+ */
 int main(int argc, char** argv){
-      if(argc < 2){
-            printf("usage: %s [petition output file]\n", *argv);
+      if(argc < 3){
+            printf("usage: %s [socket file] [petition output file]\n", *argv);
             return 1;
       }
-      pet_f_pth = argv[1];
+      pet_f_pth = argv[2];
       // why open a useless file in case of DEBUG
       // TODO: unless a full path is provided this is not a strict enough check
       // this is due to chdir("/") in pea_daem
@@ -124,5 +153,6 @@ int main(int argc, char** argv){
       fclose(tst_fp);
       pc = malloc(sizeof(struct petition_container));
       init_pc(pc);
-      return pea_daem(DEBUG);
+      int l_sock = sock_init(argv[1]);
+      return pea_daem(l_sock, DEBUG);
 }
