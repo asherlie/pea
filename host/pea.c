@@ -118,7 +118,6 @@ int pea_daem(int local_sock, _Bool debug_mode){
       return 0;
 }
 
-// TODO: check for bad socket, bind, listen (-1)
 int sock_init(char* path){
       struct sockaddr_un addr;
       memset(&addr, 0, sizeof(struct sockaddr_un));
@@ -126,9 +125,10 @@ int sock_init(char* path){
       strcpy(addr.sun_path, path);
 
       int sock = socket(AF_UNIX, SOCK_STREAM, 0);
-      bind(sock, (struct sockaddr*)&addr, SUN_LEN(&addr));
+      if(sock == -1)perror("socket");
+      if(bind(sock, (struct sockaddr*)&addr, SUN_LEN(&addr)) == -1)perror("bind");
       chmod(addr.sun_path, 0777);
-      listen(sock, 0);
+      if(listen(sock, 0) == -1)perror("listen");
       return sock;
 }
 
