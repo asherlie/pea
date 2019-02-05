@@ -57,13 +57,11 @@ int main(int argc, char** argv){
       char* s_path = argv[1];
       // list petitions to outfile
       if(*argv[2] == 'l'){
-            /*send_sig(pid, LIST_PET, 0);*/
             pet_connect(s_path, LIST_PET, 0);
             return 0;
       }
       // create petition
       if(*argv[2] == 'c'){
-            /*send_sig(pid, CREATE_PET, 0);*/
             pet_connect(s_path, CREATE_PET, 0);
             return 0;
       }
