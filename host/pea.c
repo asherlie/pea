@@ -111,8 +111,11 @@ int pea_daem(int local_sock, _Bool debug_mode){
 
       // disable blocking - acts as a timeout in case not all information is sent
       // this might not do anything - try with peer_sock below
-      int flags = fcntl(local_sock, F_GETFL, 0);
-      fcntl(local_sock, F_SETFL, flags | O_NONBLOCK);
+      // commented out bc of cpu usage
+      /*
+       *int flags = fcntl(local_sock, F_GETFL, 0);
+       *fcntl(local_sock, F_SETFL, flags | O_NONBLOCK);
+       */
 
       int peer_sock = -1;
       char pet_label[50] = {0};
