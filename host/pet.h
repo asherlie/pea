@@ -1,13 +1,5 @@
 #include <stdio.h>
 
-/*
- * petitions are unlabeled
- * a list of labeled petitions should be distrubuted
- * separately in a mailing list
- * petitions are referred to within the PEA ecosystem 
- * by their index within the petition_container
- */
-
 struct petition{
       char label[50];
       int n, cap, creator;
