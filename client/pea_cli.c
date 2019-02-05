@@ -22,6 +22,7 @@ int pack_int(int x, int y){
 // pet_label MUST be a reference to a char[50]
 int pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
       int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+      if(sock == -1)perror("socket");
       struct sockaddr_un remote;
       memset(&remote, 0, sizeof(struct sockaddr_un));
       remote.sun_family = AF_UNIX;
@@ -34,6 +35,7 @@ int pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
       int ret;
       if((ret = send(sock, &snd_val, sizeof(int), 0) == -1))perror("send");
       if((ret = send(sock, pet_label, 50, 0)) == -1)perror("send");
+      close(sock);
       return ret;
 }
 
