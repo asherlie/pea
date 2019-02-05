@@ -105,8 +105,6 @@ int pea_daem(int local_sock, _Bool debug_mode){
 
       int peer_sock = -1;
       while(1){
-            /*pause();*/
-            /*usleep(1000);*/
             // TODO: destroy socket at the end of this while loop
             // to ensure that nobody stays connected
             int packed_int = -1;
@@ -119,6 +117,8 @@ int pea_daem(int local_sock, _Bool debug_mode){
 }
 
 int sock_init(char* path){
+      // if this socket already exists, remove it
+      remove(path);
       struct sockaddr_un addr;
       memset(&addr, 0, sizeof(struct sockaddr_un));
       addr.sun_family = AF_UNIX; 

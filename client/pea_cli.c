@@ -24,11 +24,13 @@ int pet_connect(char* sock_path, int pet_opt, int ref_num){
       remote.sun_family = AF_UNIX;
       strcpy(remote.sun_path, sock_path);
       // this is all that is necessary for for pea to receive our credentials
-      connect(sock, (struct sockaddr*)&remote, sizeof(struct sockaddr_un));
+      if(connect(sock, (struct sockaddr*)&remote, sizeof(struct sockaddr_un)) == -1)perror("connect");
       // sending our petition option
       // this integer uses the first 16 bits for pet_opt and second for ref
       int snd_val = pack_int(pet_opt, ref_num);
-      return (send(sock, &snd_val, sizeof(int), 0) == -1);
+      int ret;
+      if((ret = send(sock, &snd_val, sizeof(int), 0) == -1))perror("send");
+      return ret;
 }
 
 _Bool sign_petition(char* sock_path, int ref_num){
