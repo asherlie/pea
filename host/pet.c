@@ -9,6 +9,7 @@ void init_pc(struct petition_container* pc){
 }
 
 void init_p(struct petition* p){
+      memset(p->label, 0, 50);
       p->creator = -1;
       p->n = 0;
       p->cap = 10;
@@ -23,7 +24,7 @@ struct petition* alloc_p(){
 
 // inserts petition into petition container
 // returns whether or not pc has been resized
-_Bool insert_p(struct petition* p, struct petition_container* pc, int creator){
+_Bool insert_p(struct petition* p, struct petition_container* pc, int creator, char* label){
       _Bool ret;
       if((ret = pc->n == pc->cap)){
             pc->cap *= 2;
@@ -32,6 +33,7 @@ _Bool insert_p(struct petition* p, struct petition_container* pc, int creator){
             free(pc->petitions);
             pc->petitions = tmp_pet;
       }
+      strncpy(p->label, label, 49);
       p->creator = creator;
       pc->petitions[pc->n++] = p;
       return ret;
@@ -59,7 +61,7 @@ int print_sigs(FILE* fp, struct petition_container* pc){
       int total_sigs = 0;
       for(int i = 0; i < pc->n; ++i){
             total_sigs += pc->petitions[i]->n;
-            fprintf(fp, "petition #%i created by user %i:\n", i, pc->petitions[i]->creator);
+            fprintf(fp, "petition #%i (%s) created by user %i:\n", i, pc->petitions[i]->label, pc->petitions[i]->creator);
             for(int j = 0; j < pc->petitions[i]->n; ++j)
                   fprintf(fp, "  %i: %i\n", j, pc->petitions[i]->signatures[j]);
       }

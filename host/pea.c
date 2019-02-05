@@ -12,6 +12,7 @@
  * Annoyance
  *
  */
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -24,6 +25,8 @@
 #include <sys/un.h>
 
 #include <syslog.h>
+
+#include <fcntl.h>
 
 #include "pet.h"
 
@@ -38,7 +41,7 @@ struct petition_container* pc;
 
 // pet_handler handles LIST_PET, SIGN_PET, and CREATE_PET
 // LIST_PET can be performed without credentials
-int pet_handler(int p_sock, int packed_int){
+int pet_handler(int p_sock, int packed_int, char* str_arg){
       socklen_t len = sizeof(struct ucred);
       struct ucred cred;
       memset(&cred, 0, sizeof(struct ucred));
@@ -66,7 +69,7 @@ int pet_handler(int p_sock, int packed_int){
                   #endif
                   break;
             case CREATE_PET:
-                  insert_p(alloc_p(), pc, cred.uid);
+                  insert_p(alloc_p(), pc, cred.uid, str_arg);
                   #if DEBUG
                   printf("new petition created by user: %i\n", cred.uid);
                   #endif
@@ -103,14 +106,21 @@ int pea_daem(int local_sock, _Bool debug_mode){
 
       /* we're now a ~~daemon~~ */
 
+      // disable blocking - acts as a timeout in case not all information is sent
+      // this might not do anything - try with peer_sock below
+      int flags = fcntl(local_sock, F_GETFL, 0);
+      fcntl(local_sock, F_SETFL, flags | O_NONBLOCK);
+
       int peer_sock = -1;
+      char pet_label[50] = {0};
       while(1){
-            // TODO: destroy socket at the end of this while loop
+            // TODO: destroy socket and reopen before each iteration of this while loop
             // to ensure that nobody stays connected
             int packed_int = -1;
             peer_sock = accept(local_sock, NULL, NULL);
             read(peer_sock, &packed_int, sizeof(int));
-            pet_handler(peer_sock, packed_int);
+            read(peer_sock, pet_label, 50);
+            pet_handler(peer_sock, packed_int, pet_label);
             peer_sock = -1;
       }
       return 0;
