@@ -85,7 +85,10 @@ int pea_daem(int local_sock, _Bool debug_mode){
             pid = fork();
             if(pid < 0)exit(EXIT_FAILURE);
             // parent is killed
-            if(pid > 0)exit(EXIT_SUCCESS);
+            if(pid > 0){
+                  printf("daemon spawned at pid: %i\n", pid);
+                  exit(EXIT_SUCCESS);
+            }
             umask(0);
             openlog("pea", LOG_PID, LOG_USER);
             syslog(LOG_INFO, "PEA daemon started at pid: %i\n", pid);
