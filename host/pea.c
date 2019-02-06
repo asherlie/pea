@@ -34,7 +34,7 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 
-#define DEBUG 1
+#define DEBUG 0
 
 char* pet_f_pth = NULL;
 struct petition_container* pc;
@@ -166,6 +166,13 @@ int main(int argc, char** argv){
             puts("enter a valid file path");
             return 1;
       }
+      /* setting read only permissions for all but this user
+       * this is not ideal because the user that spawned the daemon
+       * can edit the petition file
+       * as long as all have read access and can send LIST_PET
+       * shouldn't be a problem
+       */
+      chmod(pet_f_pth, 0644);
       fclose(tst_fp);
       pc = malloc(sizeof(struct petition_container));
       init_pc(pc);
