@@ -8,6 +8,7 @@
 #define LIST_PET   0
 #define SIGN_PET   1
 #define CREATE_PET 2
+#define RM_PET     3
 
 char empty_str_arg[50] = {0};
 
@@ -43,6 +44,8 @@ _Bool sign_petition(char* sock_path, int ref_num){
       return pet_connect(sock_path, SIGN_PET, ref_num, empty_str_arg) != -1;
 }
 
+// TODO: possibly default to /tmp/pea/pet_sock for socket
+// location to make it easier for user
 /*
  * usage:
  *   ./pea socket_file list                 // list available petitions
@@ -88,6 +91,11 @@ int main(int argc, char** argv){
       if(*argv[2] == 's'){
             int pet_num = atoi(argv[3]);
             sign_petition(s_path, pet_num);
+            return 0;
+      }
+      if(*argv[2] == 'r'){
+            int pet_num = atoi(argv[3]);
+            pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
             return 0;
       }
       p_usage(*argv);

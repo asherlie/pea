@@ -24,7 +24,7 @@ struct petition* alloc_p(){
 
 // inserts petition into petition container
 // returns whether or not pc has been resized
-_Bool insert_p(struct petition* p, struct petition_container* pc, int creator, char* label){
+_Bool insert_p(struct petition* p, struct petition_container* pc, uid_t creator, char* label){
       _Bool ret;
       if((ret = pc->n == pc->cap)){
             pc->cap *= 2;
@@ -37,6 +37,20 @@ _Bool insert_p(struct petition* p, struct petition_container* pc, int creator, c
       p->creator = creator;
       pc->petitions[pc->n++] = p;
       return ret;
+}
+
+_Bool remove_p(struct petition_container* pc, int index){
+      /* 
+       * not bothering with reallocating when we could just shift the
+       * latter part of the struct petition** left
+       */
+      // memmove for overlapping mem
+      free(pc->petitions[index]->signatures);
+      pc->petitions[index]->signatures = NULL;
+      free(pc->petitions[index]);
+      pc->petitions[index] = NULL;
+      memmove(&pc->petitions[index], &pc->petitions[index+1], sizeof(struct petition*)*(--pc->n)-index-1);
+      return 1;
 }
 
 /* signature management */

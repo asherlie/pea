@@ -33,6 +33,7 @@
 #define LIST_PET   0
 #define SIGN_PET   1
 #define CREATE_PET 2
+#define RM_PET     3
 
 #define DEBUG 0
 
@@ -74,6 +75,14 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   printf("new petition created by user: %i\n", cred.uid);
                   #endif
                   break;
+            case RM_PET:
+                  // checking for out of bounds issues and credentials
+                  // only she who created a petition can remove it
+                  if(pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
+                  remove_p(pc, pet_num);
+                  break;
+
+
       }
       return 0;
 }

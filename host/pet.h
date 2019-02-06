@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <sys/types.h>
 
 struct petition{
       char label[50];
-      int n, cap, creator;
+      int n, cap;
+      uid_t creator;
       int* signatures;
 };
 
@@ -14,7 +16,8 @@ struct petition_container{
 void init_pc(struct petition_container* pc);
 void init_p(struct petition* p);
 struct petition* alloc_p();
-_Bool insert_p(struct petition* p, struct petition_container* pc, int creator, char* label);
+_Bool insert_p(struct petition* p, struct petition_container* pc, uid_t creator, char* label);
+_Bool remove_p(struct petition_container* pc, int index);
 
 /* signature management */
 
