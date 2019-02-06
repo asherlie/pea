@@ -9,10 +9,18 @@
 #define SIGN_PET   1
 #define CREATE_PET 2
 #define RM_PET     3
+#define RM_SIG     4
 
 char empty_str_arg[50] = {0};
 
-/*strtol();*/
+_Bool strtoi(char* str, int* i){
+      char* res;
+      unsigned int r = (unsigned int)strtol(str, &res, 10);
+      if(*res)return 0;
+      *i = (int)r;
+      return 1;
+}
+
 // packs an integer into the first and last 16 bits of an int
 int pack_int(int x, int y){
       return x | (y << 16);
@@ -89,12 +97,20 @@ int main(int argc, char** argv){
       // bound checking, etc.
       // sign petition
       if(*argv[2] == 's'){
-            int pet_num = atoi(argv[3]);
+            int pet_num = -1;
+            if(!strtoi(argv[3], &pet_num)){
+                  p_usage(*argv);
+                  return 1;
+            }
             sign_petition(s_path, pet_num);
             return 0;
       }
       if(*argv[2] == 'r'){
-            int pet_num = atoi(argv[3]);
+            int pet_num = -1;
+            if(!strtoi(argv[3], &pet_num)){
+                  p_usage(*argv);
+                  return 1;
+            }
             pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
             return 0;
       }
