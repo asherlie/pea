@@ -29,7 +29,7 @@ int pack_int(int x, int y){
 // petition option and reference number are packed into a single int before being sent
 // ref_num can be zero in the case of CREATE_PET
 // pet_label MUST be a reference to a char[50]
-int pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
+_Bool pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
       int sock = socket(AF_UNIX, SOCK_STREAM, 0);
       if(sock == -1)perror("socket");
       struct sockaddr_un remote;
@@ -48,7 +48,7 @@ int pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
       if((ret = send(sock, &snd_val, sizeof(int), 0) == -1))perror("send");
       if((ret = send(sock, pet_label, 50, 0)) == -1)perror("send");
       close(sock);
-      return ret;
+      return ret != -1;
 }
 
 _Bool sign_petition(char* sock_path, int ref_num){
@@ -79,44 +79,30 @@ int main(int argc, char** argv){
       }
       char* s_path = argv[1];
       // list petitions to outfile
-      if(*argv[2] == 'l'){
-            pet_connect(s_path, LIST_PET, 0, empty_str_arg);
-            return 0;
-      }
-      // create petition
-      if(*argv[2] == 'c'){
-            if(argc < 4){
-                  p_usage(*argv);
-                  return 1;
-            }
-            pet_connect(s_path, CREATE_PET, 0, argv[3]);
-            return 0;
-      }
-      // sign, unsign, remove need 2 additional args
+      if(*argv[2] == 'l')
+            return !pet_connect(s_path, LIST_PET, 0, empty_str_arg);
+      // create, sign, unsign, remove need 2 additional args
       if(argc < 4){
             p_usage(*argv);
             return 1;
       }
+      // create petition
+      if(*argv[2] == 'c')
+            return !pet_connect(s_path, CREATE_PET, 0, argv[3]);
       int pet_num = -1;
       if(!strtoi(argv[3], &pet_num)){
             p_usage(*argv);
             return 1;
       }
       // sign petition
-      if(*argv[2] == 's'){
-            sign_petition(s_path, pet_num);
-            return 0;
-      }
+      if(*argv[2] == 's')
+            return !sign_petition(s_path, pet_num);
       // remove petition from pc
-      if(*argv[2] == 'r'){
-            pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
-            return 0;
-      }
+      if(*argv[2] == 'r')
+            return !pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
       // unsign petition
-      if(*argv[2] == 'u'){
-            pet_connect(s_path, RM_SIG, pet_num, empty_str_arg);
-            return 0;
-      }
+      if(*argv[2] == 'u')
+            return !pet_connect(s_path, RM_SIG, pet_num, empty_str_arg);
       p_usage(*argv);
       return 0;
 }
