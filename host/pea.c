@@ -82,7 +82,10 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   if(pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
                   remove_p(pc, pet_num);
                   break;
-
+            case RM_SIG:
+                  if(pc->n <= pet_num)break;
+                  remove_sig(pc->petitions[pet_num], cred.uid);
+                  break;
 
       }
       return 0;

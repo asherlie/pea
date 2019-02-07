@@ -39,6 +39,7 @@ _Bool insert_p(struct petition* p, struct petition_container* pc, uid_t creator,
       return ret;
 }
 
+// TODO: UB on rm pet[0] because a read is made to pet[1] - handle n == 0
 _Bool remove_p(struct petition_container* pc, int index){
       /* 
        * not bothering with reallocating when we could just shift the
@@ -53,10 +54,12 @@ _Bool remove_p(struct petition_container* pc, int index){
       return 1;
 }
 
+// TODO: UB on rm sig[0] because a read is made to sig[1] - handle n == 0
 _Bool remove_sig(struct petition* p, uid_t uid){
-      int i;
-      for(i = 0; i < p->n; ++i)
+      for(int i = 0; i < p->n; ++i)
             if(p->signatures[i] == uid){
+                  memmove(&p->signatures[i], &p->signatures[i+1], sizeof(int)*((p->n--)-i-1));
+                  return 1;
             }
       return 0;
 }

@@ -68,7 +68,8 @@ _Bool sign_petition(char* sock_path, int ref_num){
 void p_usage(char* a){
       printf("usage:\n  %s [socket_file] \"list\" - lists available petitions\
                \n  %s [socket_file] \"sign\" [list_item] - signs petition\
-               \n  %s [socket_file] \"create\" [petition_name] - creates new petition\n", a, a, a);
+               \n  %s [socket_file] \"create\" [petition_name] - creates new petition\
+               \n  %s [socket_file] \"unsign\" [list_item] - removes signature from petition\n", a, a, a, a);
 }
 
 int main(int argc, char** argv){
@@ -126,6 +127,7 @@ int main(int argc, char** argv){
                   return 1;
             }
             pet_connect(s_path, RM_SIG, pet_num, empty_str_arg);
+            return 0;
       }
       p_usage(*argv);
       return 0;
