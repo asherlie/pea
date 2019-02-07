@@ -9,11 +9,12 @@ a host daemon (source file: _host/pea.c_) is spawned
 ./pea_h [socket file] [petition output file]
 ```
 socket file and petition output file must both be complete filepaths
+
 both files should be in directories accessible by any users who might want or need to sign a petition
 
 ## client
 pea is used to operate on petitions
-petitions can be signed, created, removed (with the proper credentials), or written to the petition output file designated by `pea_h`
+petitions can be signed, unsigned, created, removed (with the proper credentials), or written to the petition output file designated by `pea_h`
 
 #### usage:
 ```sh
