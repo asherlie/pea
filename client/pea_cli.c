@@ -36,10 +36,13 @@ int pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
       memset(&remote, 0, sizeof(struct sockaddr_un));
       remote.sun_family = AF_UNIX;
       strcpy(remote.sun_path, sock_path);
-      // this is all that is necessary for for pea to receive our credentials
+      // this is all that is necessary for pea to receive our credentials
       if(connect(sock, (struct sockaddr*)&remote, sizeof(struct sockaddr_un)) == -1)perror("connect");
       // sending our petition option
       // this integer uses the first 16 bits for pet_opt and second for ref
+      // TODO: ref_num should be 29 bits - we only need 3 for pet_opt 2
+      // TODO: check size of ref_num
+      // if(ref_num > 16 bits) ...
       int snd_val = pack_int(pet_opt, ref_num);
       int ret;
       if((ret = send(sock, &snd_val, sizeof(int), 0) == -1))perror("send");
@@ -93,7 +96,7 @@ int main(int argc, char** argv){
             p_usage(*argv);
             return 1;
       }
-      // TODO: use my strtoi and make this safer
+      // TODO: move strtoi of argv[3] out here and perform it just once
       // bound checking, etc.
       // sign petition
       if(*argv[2] == 's'){
@@ -105,6 +108,7 @@ int main(int argc, char** argv){
             sign_petition(s_path, pet_num);
             return 0;
       }
+      // remove petition from pc
       if(*argv[2] == 'r'){
             int pet_num = -1;
             if(!strtoi(argv[3], &pet_num)){
@@ -113,6 +117,15 @@ int main(int argc, char** argv){
             }
             pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
             return 0;
+      }
+      // unsign petition
+      if(*argv[2] == 'u'){
+            int pet_num = -1;
+            if(!strtoi(argv[3], &pet_num)){
+                  p_usage(*argv);
+                  return 1;
+            }
+            pet_connect(s_path, RM_SIG, pet_num, empty_str_arg);
       }
       p_usage(*argv);
       return 0;

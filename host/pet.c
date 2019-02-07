@@ -13,7 +13,7 @@ void init_p(struct petition* p){
       p->creator = -1;
       p->n = 0;
       p->cap = 10;
-      p->signatures = malloc(sizeof(int)*p->cap);
+      p->signatures = malloc(sizeof(uid_t)*p->cap);
 }
 
 struct petition* alloc_p(){
@@ -49,20 +49,28 @@ _Bool remove_p(struct petition_container* pc, int index){
       pc->petitions[index]->signatures = NULL;
       free(pc->petitions[index]);
       pc->petitions[index] = NULL;
-      memmove(&pc->petitions[index], &pc->petitions[index+1], sizeof(struct petition*)*(--pc->n)-index-1);
+      memmove(&pc->petitions[index], &pc->petitions[index+1], sizeof(struct petition*)*((pc->n--)-index-1));
       return 1;
+}
+
+_Bool remove_sig(struct petition* p, uid_t uid){
+      int i;
+      for(i = 0; i < p->n; ++i)
+            if(p->signatures[i] == uid){
+            }
+      return 0;
 }
 
 /* signature management */
 
 // returns addition success
-_Bool add_signature(struct petition* p, int u_id){
+_Bool add_signature(struct petition* p, uid_t u_id){
       for(int i = 0; i < p->n; ++i)
             if(u_id == p->signatures[i])return 0;
       if(p->n == p->cap){
             p->cap *= 2;
-            int* tmp_sig = malloc(sizeof(int)*p->cap);
-            memcpy(tmp_sig, p->signatures, sizeof(int)*p->n);
+            uid_t* tmp_sig = malloc(sizeof(uid_t)*p->cap);
+            memcpy(tmp_sig, p->signatures, sizeof(uid_t)*p->n);
             free(p->signatures);
             p->signatures = tmp_sig;
       }

@@ -5,7 +5,7 @@ struct petition{
       char label[50];
       int n, cap;
       uid_t creator;
-      int* signatures;
+      uid_t* signatures;
 };
 
 struct petition_container{
@@ -18,8 +18,9 @@ void init_p(struct petition* p);
 struct petition* alloc_p();
 _Bool insert_p(struct petition* p, struct petition_container* pc, uid_t creator, char* label);
 _Bool remove_p(struct petition_container* pc, int index);
+_Bool remove_sig(struct petition* p, uid_t uid);
 
 /* signature management */
 
-_Bool add_signature(struct petition* p, int u_id);
+_Bool add_signature(struct petition* p, uid_t u_id);
 int print_sigs(FILE* fp, struct petition_container* pc);
