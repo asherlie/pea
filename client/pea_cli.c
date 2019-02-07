@@ -92,40 +92,28 @@ int main(int argc, char** argv){
             pet_connect(s_path, CREATE_PET, 0, argv[3]);
             return 0;
       }
-      // sign requires 2 args
+      // sign, unsign, remove need 2 additional args
       if(argc < 4){
             p_usage(*argv);
             return 1;
       }
-      // TODO: move strtoi of argv[3] out here and perform it just once
-      // bound checking, etc.
+      int pet_num = -1;
+      if(!strtoi(argv[3], &pet_num)){
+            p_usage(*argv);
+            return 1;
+      }
       // sign petition
       if(*argv[2] == 's'){
-            int pet_num = -1;
-            if(!strtoi(argv[3], &pet_num)){
-                  p_usage(*argv);
-                  return 1;
-            }
             sign_petition(s_path, pet_num);
             return 0;
       }
       // remove petition from pc
       if(*argv[2] == 'r'){
-            int pet_num = -1;
-            if(!strtoi(argv[3], &pet_num)){
-                  p_usage(*argv);
-                  return 1;
-            }
             pet_connect(s_path, RM_PET, pet_num, empty_str_arg);
             return 0;
       }
       // unsign petition
       if(*argv[2] == 'u'){
-            int pet_num = -1;
-            if(!strtoi(argv[3], &pet_num)){
-                  p_usage(*argv);
-                  return 1;
-            }
             pet_connect(s_path, RM_SIG, pet_num, empty_str_arg);
             return 0;
       }
