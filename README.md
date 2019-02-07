@@ -21,6 +21,7 @@ petitions can be signed, created, removed (with the proper credentials), or writ
 ./pea socket_file sign list_item       # sign petition
 ./pea socket_file create petition_name # create new petition
 ./pea socket_file remove list_item     # remove petition
+./pea socket_file unsign list_item     # remove petition
 ```
 
 ## notes
@@ -30,6 +31,7 @@ petitions can be signed, created, removed (with the proper credentials), or writ
 
 ## TODO
 * ~~add README~~
-* add unsign functionality
+* ~~add unsign functionality~~
 * rename list to printfile, add list command that prints petitions locally
 * use less precision for pet_option in packed integer to make more room for petition indices
+* fix undefined behavior in remove_p and remove_sig
