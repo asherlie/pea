@@ -52,7 +52,7 @@ _Bool pet_connect(char* sock_path, int pet_opt, int ref_num, char* pet_label){
 }
 
 _Bool sign_petition(char* sock_path, int ref_num){
-      return pet_connect(sock_path, SIGN_PET, ref_num, empty_str_arg) != -1;
+      return pet_connect(sock_path, SIGN_PET, ref_num, empty_str_arg);
 }
 
 // TODO: possibly default to /tmp/pea/pet_sock for socket
