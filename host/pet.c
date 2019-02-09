@@ -11,6 +11,7 @@ void init_pc(struct petition_container* pc){
 void init_p(struct petition* p){
       memset(p->label, 0, 50);
       p->creator = -1;
+      p->from_backup = 0;
       p->n = 0;
       p->cap = 10;
       p->signatures = malloc(sizeof(uid_t)*p->cap);

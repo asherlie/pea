@@ -28,7 +28,7 @@
 
 #include <fcntl.h>
 
-#include "pet.h"
+#include "backup.h"
 
 #define LIST_PET   0
 #define SIGN_PET   1
@@ -64,7 +64,7 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   #endif
                   break;
             case SIGN_PET:
-                  if(pc->n <= pet_num)break;
+                  if(pet_num < 0 || pc->n <= pet_num)break;
                   add_signature(pc->petitions[pet_num], cred.uid);
                   #if DEBUG
                   printf("signature from user: %i added to petition %i\n", cred.uid, pet_num);
@@ -79,14 +79,13 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
             case RM_PET:
                   // checking for out of bounds issues and credentials
                   // only she who created a petition can remove it
-                  if(pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
+                  if(pet_num < 0 || pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
                   remove_p(pc, pet_num);
                   break;
             case RM_SIG:
-                  if(pc->n <= pet_num)break;
+                  if(pet_num < 0 || pc->n <= pet_num)break;
                   remove_sig(pc->petitions[pet_num], cred.uid);
                   break;
-
       }
       return 0;
 }

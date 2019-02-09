@@ -6,6 +6,7 @@ struct petition{
       int n, cap;
       uid_t creator;
       uid_t* signatures;
+      _Bool from_backup;
 };
 
 struct petition_container{
