@@ -77,7 +77,14 @@ struct petition_container* parse_pet(char* fpath){
       return pc;
 }
 
+// returns number of unique petition creators in a pc
 int unique_creators(struct petition_container* pc){
+      int ret = pc->n;
+      for(int i = 0; i < pc->n; ++i)
+            for(int j = 0; j < i; ++j)
+                  if(pc->petitions[i]->creator == pc->petitions[j]->creator)--ret;
+      // +1 for i == j
+      return ret+1;
 }
 
 // return success
@@ -86,6 +93,7 @@ _Bool setup_import_pet(struct petition_container* pc, char* fpath){
       p->auto_gen = 1;
       p->restore = parse_pet(fpath);
       // setup p->restore->unique_creators
+      p->restore->unique_creators = unique_creators(p->restore);
       if(!p->restore)return 0;
       char label[50] = {0};
       snprintf(label, 49, "RESTORE FROM %s", fpath);
