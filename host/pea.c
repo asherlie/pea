@@ -54,9 +54,7 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
       _Bool update_pf = 0;
       switch(operation){
             case LIST_PET:
-                  fp = (DEBUG) ? stdout : fopen(pet_f_pth, "w");
-                  print_sigs(fp, pc);
-                  if(!DEBUG)fclose(fp);
+                  update_pf = 1;
                   break;
             case SIGN_PET:
                   update_pf = 1;

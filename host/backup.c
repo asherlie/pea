@@ -92,6 +92,7 @@ _Bool setup_import_pet(struct petition_container* pc, char* fpath){
       struct petition* p = alloc_p();
       p->auto_gen = 1;
       p->restore = parse_pet(fpath);
+      if(!p->restore)return 0;
       // setup p->restore->unique_creators
       p->restore->unique_creators = unique_creators(p->restore);
       if(!p->restore)return 0;
