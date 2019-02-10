@@ -32,7 +32,7 @@
 
 #include "backup.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 char* pet_f_pth = NULL;
 struct petition_container* pc;
@@ -51,15 +51,15 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
       
       // for petition writing
       FILE* fp = NULL;
+      _Bool update_pf = 0;
       switch(operation){
             case LIST_PET:
                   fp = (DEBUG) ? stdout : fopen(pet_f_pth, "w");
                   print_sigs(fp, pc);
-                  #if !DEBUG
-                  fclose(fp);
-                  #endif
+                  if(!DEBUG)fclose(fp);
                   break;
             case SIGN_PET:
+                  update_pf = 1;
                   if(pet_num < 0 || pc->n <= pet_num)break;
                   // TODO: abstract this to a function in backup.c
                   // add_signature will return 1 if we can import pc->petitions[pet_num]->restore
@@ -75,6 +75,7 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   #endif
                   break;
             case CREATE_PET:
+                  update_pf = 1;
                   insert_p(alloc_p(), pc, cred.uid, str_arg);
                   #if DEBUG
                   printf("new petition created by user: %i\n", cred.uid);
@@ -84,17 +85,25 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   // checking for out of bounds issues and credentials
                   // only she who created a petition can remove it
                   if(pet_num < 0 || pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
+                  update_pf = 1;
                   remove_p(pc, pet_num);
                   break;
             case RM_SIG:
                   if(pet_num < 0 || pc->n <= pet_num)break;
+                  update_pf = 1;
                   remove_sig(pc->petitions[pet_num], cred.uid);
                   break;
             case IMPORT_PET:
+                  update_pf = 1;
                   // TODO: add error handling for bad filepath
                   // once this petition is signed by all creators in the 
                   setup_import_pet(pc, str_arg);
                   break;
+      }
+      if(update_pf){
+            fp = (DEBUG) ? stdout : fopen(pet_f_pth, "w");
+            print_sigs(fp, pc);
+            if(!DEBUG)fclose(fp);
       }
       return 0;
 }
