@@ -6,10 +6,14 @@ struct petition{
       int n, cap;
       uid_t creator;
       uid_t* signatures;
-      _Bool from_backup;
+      _Bool from_backup, auto_gen;
+
+      struct petition_container* restore;
+      int alt_count;
 };
 
 struct petition_container{
+      int unique_creators;
       int n, cap;
       struct petition** petitions;
 };

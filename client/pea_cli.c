@@ -1,15 +1,11 @@
+#include "../PET_OPT.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
-
-#define LIST_PET   0
-#define SIGN_PET   1
-#define CREATE_PET 2
-#define RM_PET     3
-#define RM_SIG     4
 
 char empty_str_arg[50] = {0};
 
@@ -69,7 +65,8 @@ void p_usage(char* a){
       printf("usage:\n  %s [socket_file] \"list\" - lists available petitions\
                \n  %s [socket_file] \"sign\" [list_item] - signs petition\
                \n  %s [socket_file] \"create\" [petition_name] - creates new petition\
-               \n  %s [socket_file] \"unsign\" [list_item] - removes signature from petition\n", a, a, a, a);
+               \n  %s [socket_file] \"unsign\" [list_item] - removes signature from petition\
+               \n  %s [socket_file] \"import\" [backup_file_path] - creates a petition to import backup file\n", a, a, a, a, a);
 }
 
 int main(int argc, char** argv){
@@ -89,6 +86,9 @@ int main(int argc, char** argv){
       // create petition
       if(*argv[2] == 'c')
             return !pet_connect(s_path, CREATE_PET, 0, argv[3]);
+      // import petition backup file
+      if(*argv[2] == 'i')
+            return !pet_connect(s_path, IMPORT_PET, 0, argv[3]);
       int pet_num = -1;
       if(!strtoi(argv[3], &pet_num)){
             p_usage(*argv);

@@ -1,6 +1,7 @@
 #include "backup.h"
 
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
@@ -19,6 +20,7 @@
  *
  */
 
+// TODO: merge_pet should possibly free src
 int merge_pet(struct petition_container* dest, struct petition_container* src){
       int nsigs = 0;
       struct petition* tmp_p = NULL;
@@ -37,6 +39,7 @@ int merge_pet(struct petition_container* dest, struct petition_container* src){
 // returns a malloc'd petition container
 struct petition_container* parse_pet(char* fpath){
       FILE* fp = fopen(fpath, "r");
+      if(!fp)return NULL;
 
       char name[50];
       char* name_p;
@@ -50,6 +53,7 @@ struct petition_container* parse_pet(char* fpath){
       init_pc(pc);
       struct petition* p = NULL;
       while(getline(&ln_p, &sz, fp) != EOF){
+            if(*ln_p == '~')continue;
             // if petition description line
             if(*ln_p != ' '){
                   p = alloc_p();
@@ -73,11 +77,18 @@ struct petition_container* parse_pet(char* fpath){
       return pc;
 }
 
-int apply_backup(struct petition_container* pc, char* backup_file){
-      struct petition_container* tmp_pc = parse_pet(backup_file);
-      int ret = merge_pet(pc, tmp_pc);
-      for(; tmp_pc->n; remove_p(tmp_pc, 0));
-      free(tmp_pc->petitions);
-      free(tmp_pc);
-      return ret;
+int unique_creators(struct petition_container* pc){
+}
+
+// return success
+_Bool setup_import_pet(struct petition_container* pc, char* fpath){
+      struct petition* p = alloc_p();
+      p->auto_gen = 1;
+      p->restore = parse_pet(fpath);
+      // setup p->restore->unique_creators
+      if(!p->restore)return 0;
+      char label[50] = {0};
+      snprintf(label, 49, "RESTORE FROM %s", fpath);
+      insert_p(p, pc, getuid(), label);
+      return 1;
 }

@@ -15,6 +15,8 @@
 
 #define _GNU_SOURCE
 
+#include "../PET_OPT.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -29,12 +31,6 @@
 #include <fcntl.h>
 
 #include "backup.h"
-
-#define LIST_PET   0
-#define SIGN_PET   1
-#define CREATE_PET 2
-#define RM_PET     3
-#define RM_SIG     4
 
 #define DEBUG 1
 
@@ -65,7 +61,15 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   break;
             case SIGN_PET:
                   if(pet_num < 0 || pc->n <= pet_num)break;
-                  add_signature(pc->petitions[pet_num], cred.uid);
+                  // TODO: abstract this to a function in backup.c
+                  // add_signature will return 1 if we can import pc->petitions[pet_num]->restore
+                  if(add_signature(pc->petitions[pet_num], cred.uid)){
+                        merge_pet(pc, pc->petitions[pet_num]->restore);
+                        for(; pc->petitions[pet_num]->restore->n; remove_p(pc->petitions[pet_num]->restore, 0));
+                        free(pc->petitions[pet_num]->restore->petitions);
+                        free(pc->petitions[pet_num]->restore);
+                        pc->petitions[pet_num]->restore = NULL;
+                  }
                   #if DEBUG
                   printf("signature from user: %i added to petition %i\n", cred.uid, pet_num);
                   #endif
@@ -85,6 +89,11 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
             case RM_SIG:
                   if(pet_num < 0 || pc->n <= pet_num)break;
                   remove_sig(pc->petitions[pet_num], cred.uid);
+                  break;
+            case IMPORT_PET:
+                  // TODO: add error handling for bad filepath
+                  // once this petition is signed by all creators in the 
+                  setup_import_pet(pc, str_arg);
                   break;
       }
       return 0;

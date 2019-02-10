@@ -1,3 +1,5 @@
 #include "pet.h"
 
-int apply_backup(struct petition_container* pc, char* backup_file);
+int merge_pet(struct petition_container* dest, struct petition_container* src);
+struct petition_container* parse_pet(char* fpath);
+_Bool setup_import_pet(struct petition_container* pc, char* fpath);
