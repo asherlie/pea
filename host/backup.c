@@ -53,7 +53,7 @@ struct petition_container* parse_pet(char* fpath){
       init_pc(pc);
       struct petition* p = NULL;
       while(getline(&ln_p, &sz, fp) != EOF){
-            if(*ln_p == '~')continue;
+            if(*ln_p == '*')continue;
             // if petition description line
             if(*ln_p != ' '){
                   p = alloc_p();
