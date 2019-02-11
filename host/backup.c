@@ -42,7 +42,6 @@ struct petition_container* parse_pet(char* fpath){
       if(!fp)return NULL;
 
       char name[50];
-      char* name_p;
       int ind = 0;
       uid_t uid;
       // a line can never be more than 100 chars long
@@ -58,12 +57,9 @@ struct petition_container* parse_pet(char* fpath){
             if(*ln_p != ' '){
                   p = alloc_p();
                   char* tmp_ln_p = ln_p+13;
-                  sscanf(tmp_ln_p, "%s) ", name);
-                  name_p = name;
-                  int len = strnlen(name_p, 48);
-                  name_p[len-1] = 0;
-                  tmp_ln_p += len+17;
-                  sscanf(tmp_ln_p, "%u:", &uid);
+                  char* end_paren = strrchr(tmp_ln_p, ')');
+                  strncpy(name, tmp_ln_p, end_paren-tmp_ln_p);
+                  sscanf(end_paren+18, "%u:", &uid);
                   insert_p(p, pc, uid, name);
             }
             else{
