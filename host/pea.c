@@ -53,11 +53,11 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   update_pf = 1;
                   break;
             case SIGN_PET:
-                  update_pf = 1;
                   if(pet_num < 0 || pc->n <= pet_num)break;
                   // TODO: abstract this to a function in backup.c
                   // add_signature will return 1 if we can import pc->petitions[pet_num]->restore
-                  if(add_signature(pc->petitions[pet_num], cred.uid)){
+                  // update_pf will be set to whether or not petition has been inserted successfully
+                  if(add_signature(pc->petitions[pet_num], cred.uid, &update_pf)){
                         merge_pet(pc, pc->petitions[pet_num]->restore);
                         for(; pc->petitions[pet_num]->restore->n; remove_p(pc->petitions[pet_num]->restore, 0));
                         free(pc->petitions[pet_num]->restore->petitions);
@@ -84,8 +84,7 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   break;
             case RM_SIG:
                   if(pet_num < 0 || pc->n <= pet_num)break;
-                  update_pf = 1;
-                  remove_sig(pc->petitions[pet_num], cred.uid);
+                  update_pf = remove_sig(pc->petitions[pet_num], cred.uid);
                   break;
             case IMPORT_PET:
                   update_pf = 1;

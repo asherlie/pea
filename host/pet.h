@@ -27,5 +27,5 @@ _Bool remove_sig(struct petition* p, uid_t uid);
 
 /* signature management */
 
-_Bool add_signature(struct petition* p, uid_t u_id);
+_Bool add_signature(struct petition* p, uid_t u_id, _Bool* added);
 int print_sigs(FILE* fp, struct petition_container* pc);

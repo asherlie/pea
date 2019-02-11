@@ -71,9 +71,12 @@ _Bool remove_sig(struct petition* p, uid_t uid){
 /* signature management */
 
 // returns auto-generated signature completion
-_Bool add_signature(struct petition* p, uid_t u_id){
+_Bool add_signature(struct petition* p, uid_t u_id, _Bool* added){
       for(int i = 0; i < p->n; ++i)
-            if(u_id == p->signatures[i])return 0;
+            if(u_id == p->signatures[i]){
+                  if(added)*added = 0;
+                  return 0;
+            }
       if(p->n == p->cap){
             p->cap *= 2;
             uid_t* tmp_sig = malloc(sizeof(uid_t)*p->cap);
@@ -82,6 +85,7 @@ _Bool add_signature(struct petition* p, uid_t u_id){
             p->signatures = tmp_sig;
       }
       p->signatures[p->n++] = u_id;
+      if(added)*added = 1;
       if(p->auto_gen && p->restore){
             // these cases can be handled separately because of the
             // duplicate checking above

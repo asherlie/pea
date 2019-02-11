@@ -28,7 +28,7 @@ int merge_pet(struct petition_container* dest, struct petition_container* src){
             tmp_p = alloc_p();
             tmp_p->from_backup = 1;
             for(int j = 0; j < src->petitions[i]->n; ++j){
-                  add_signature(tmp_p, src->petitions[i]->signatures[j]);
+                  add_signature(tmp_p, src->petitions[i]->signatures[j], NULL);
                   ++nsigs;
             }
             insert_p(tmp_p, dest, src->petitions[i]->creator, src->petitions[i]->label);
@@ -64,7 +64,7 @@ struct petition_container* parse_pet(char* fpath){
             }
             else{
                   sscanf(ln_p, " %i: %u", &ind, &uid);
-                  add_signature(p, uid);
+                  add_signature(p, uid, NULL);
             }
             memset(ln, 0, 100);
             memset(name, 0, 50);
