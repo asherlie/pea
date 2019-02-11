@@ -28,8 +28,6 @@
 
 #include "backup.h"
 
-#define DEBUG 1
-
 char* pet_f_pth = NULL;
 struct petition_container* pc;
 
