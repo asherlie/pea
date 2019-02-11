@@ -1,5 +1,6 @@
 #include "pet.h"
 #include <stdlib.h>
+#include <unistd.h> // getuid
 #include <string.h> // memcpy
 
 void init_pc(struct petition_container* pc){
@@ -82,9 +83,14 @@ _Bool add_signature(struct petition* p, uid_t u_id){
       }
       p->signatures[p->n++] = u_id;
       if(p->auto_gen && p->restore){
-            for(int i = 0; i < p->restore->n; ++i){
-                  if(u_id == p->restore->petitions[i]->creator){
-                        ++p->alt_count; break;
+            // these cases can be handled separately because of the
+            // duplicate checking above
+            if(u_id == getuid())++p->alt_count;
+            else{
+                  for(int i = 0; i < p->restore->n; ++i){
+                        if(u_id == p->restore->petitions[i]->creator){
+                              ++p->alt_count; break;
+                        }
                   }
             }
       }

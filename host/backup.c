@@ -76,13 +76,15 @@ struct petition_container* parse_pet(char* fpath){
 // returns number of unique petition creators in a pc
 int unique_creators(struct petition_container* pc){
       int ret = 0; 
-      long check[pc->n]; int cs = 0;
+      // +1 for spawner of daemon - getuid()
+      long check[pc->n+1]; int cs = 0;
       for(int i = 0; i < pc->n; ++i)
             check[cs++] = (long)pc->petitions[i]->creator;
-      for(int i = 0; i < pc->n; ++i)
+      check[cs] = getuid();
+      for(int i = 0; i < pc->n+1; ++i)
             for(int j = 0; j < i; ++j)
                   if(check[i] == check[j])check[j] = -1;
-      for(int i = 0; i < pc->n; ++i){
+      for(int i = 0; i < pc->n+1; ++i){
             if(check[i] != -1)++ret;
       }
       return ret;
@@ -100,6 +102,7 @@ _Bool setup_import_pet(struct petition_container* pc, char* fpath){
       if(!p->restore)return 0;
       char label[50] = {0};
       snprintf(label, 49, "RESTORE FROM %s", fpath);
+      // TODO: should creator be marked ass client who entered the import command?
       insert_p(p, pc, getuid(), label);
       return 1;
 }

@@ -24,8 +24,8 @@ petitions can be signed, unsigned, created, removed (with the proper credentials
 ./pea socket_file remove list_item         # remove petition
 ./pea socket_file unsign list_item         # remove petition
 ./pea socket_file import backup_file_path  # creates a petition to import petitions and signatures from backup file
-                                           # once all petition creators from backup file have signed, petitions will
-                                           # be imported automatically
+                                           # petitions will be imported automatically once all petition creators from
+                                           # backup file as well as the user who spawned the PEA host have signed
 ```
 
 ## notes

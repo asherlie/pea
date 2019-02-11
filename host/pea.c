@@ -1,15 +1,11 @@
 /*
  * ~PEA~
  *
- * Pea
- * Enables
- * Amendment
+ * Pea                 Pea
+ * Enables     OR      Expresses
+ * Amendment           Annoyance
  *
  * OR
- *
- * Pea
- * Expresses
- * Annoyance
  *
  */
 
