@@ -51,37 +51,38 @@ _Bool sign_petition(char* sock_path, int ref_num){
       return pet_connect(sock_path, SIGN_PET, ref_num, empty_str_arg);
 }
 
-void p_usage(char* a){
+int p_usage(char* a){
       printf("usage:\n  %s [socket_file] \"print\" [print_filepath] - print all petitions and signatures to print_filepath\
                \n  %s [socket_file] \"sign\" [list_item] - signs petition\
                \n  %s [socket_file] \"create\" [petition_name] - creates new petition\
                \n  %s [socket_file] \"unsign\" [list_item] - removes signature from petition\
                \n  %s [socket_file] \"import\" [backup_file_path] - creates a petition to import backup file\n", a, a, a, a, a);
+      return 1;
 }
 
 // TODO: possibly default to /tmp/pea/pet_sock for socket
 // location to make it easier for user
 int main(int argc, char** argv){
-      if(argc < 4){
-            p_usage(*argv);
-            return 1;
-      }
+      if(argc < 4)
+            return p_usage(*argv);
       char* s_path = argv[1];
       // print petitions to file
-      if(*argv[2] == 'p')
+      if(*argv[2] == 'p'){
+            if(*argv[3] != '/')return puts("print_filepath must be a complete filepath") != EOF;
             return !pet_connect(s_path, PRINT_PET, 0, argv[3]);
+      }
       // create, sign, unsign, remove need 2 additional args
       // create petition
       if(*argv[2] == 'c')
             return !pet_connect(s_path, CREATE_PET, 0, argv[3]);
       // import petition backup file
-      if(*argv[2] == 'i')
+      if(*argv[2] == 'i'){
+            if(*argv[3] != '/')return puts("backup_file_path must be a complete filepath") != EOF;
             return !pet_connect(s_path, IMPORT_PET, 0, argv[3]);
-      int pet_num = -1;
-      if(!strtoi(argv[3], &pet_num)){
-            p_usage(*argv);
-            return 1;
       }
+      int pet_num = -1;
+      if(!strtoi(argv[3], &pet_num))
+            return p_usage(*argv);
       // sign petition
       if(*argv[2] == 's')
             return !sign_petition(s_path, pet_num);

@@ -182,9 +182,14 @@ int main(int argc, char** argv){
             return 1;
       }
       pet_f_pth = argv[2];
+      if(*pet_f_pth != '/'){
+            puts("petition output file must be a complete filepath");
+            return 1;
+      }
       // why open a useless file in case of DEBUG
       // TODO: unless a full path is provided this is not a strict enough check
       // this is due to chdir("/") in pea_daem
+      // TODO: convert this to a complete filepath if it's not one already
       FILE* tst_fp = fopen(pet_f_pth, "w");
       if(!tst_fp){
             puts("enter a valid file path");
