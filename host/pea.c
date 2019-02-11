@@ -31,8 +31,7 @@
 char* pet_f_pth = NULL;
 struct petition_container* pc;
 
-// pet_handler handles LIST_PET, SIGN_PET, and CREATE_PET
-// LIST_PET can be performed without credentials
+// TODO: pet_handler should return meaningful errno
 int pet_handler(int p_sock, int packed_int, char* str_arg){
       socklen_t len = sizeof(struct ucred);
       struct ucred cred;
@@ -47,8 +46,11 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
       FILE* fp = NULL;
       _Bool update_pf = 0;
       switch(operation){
-            case LIST_PET:
-                  update_pf = 1;
+            case PRINT_PET:
+                  fp = fopen(str_arg, "w");
+                  if(!fp)break;
+                  print_sigs(fp, pc);
+                  fclose(fp);
                   break;
             case SIGN_PET:
                   if(pet_num < 0 || pc->n <= pet_num)break;
@@ -147,6 +149,7 @@ int pea_daem(int local_sock, _Bool debug_mode){
             peer_sock = accept(local_sock, NULL, NULL);
             read(peer_sock, &packed_int, sizeof(int));
             read(peer_sock, pet_label, 50);
+            // TODO: return errnos to client
             pet_handler(peer_sock, packed_int, pet_label);
             peer_sock = -1;
       }

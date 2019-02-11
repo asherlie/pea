@@ -51,38 +51,26 @@ _Bool sign_petition(char* sock_path, int ref_num){
       return pet_connect(sock_path, SIGN_PET, ref_num, empty_str_arg);
 }
 
-// TODO: possibly default to /tmp/pea/pet_sock for socket
-// location to make it easier for user
-/*
- * usage:
- *   ./pea socket_file list                 // list available petitions
- *   ./pea socket_file sign list_item       // sign petition
- *   ./pea socket_file create petition_name // create new petition
- *
- */
-
 void p_usage(char* a){
-      printf("usage:\n  %s [socket_file] \"list\" - lists available petitions\
+      printf("usage:\n  %s [socket_file] \"print\" [print_filepath] - print all petitions and signatures to print_filepath\
                \n  %s [socket_file] \"sign\" [list_item] - signs petition\
                \n  %s [socket_file] \"create\" [petition_name] - creates new petition\
                \n  %s [socket_file] \"unsign\" [list_item] - removes signature from petition\
                \n  %s [socket_file] \"import\" [backup_file_path] - creates a petition to import backup file\n", a, a, a, a, a);
 }
 
+// TODO: possibly default to /tmp/pea/pet_sock for socket
+// location to make it easier for user
 int main(int argc, char** argv){
-      if(argc < 3){
-            p_usage(*argv);
-            return 1;
-      }
-      char* s_path = argv[1];
-      // list petitions to outfile
-      if(*argv[2] == 'l')
-            return !pet_connect(s_path, LIST_PET, 0, empty_str_arg);
-      // create, sign, unsign, remove need 2 additional args
       if(argc < 4){
             p_usage(*argv);
             return 1;
       }
+      char* s_path = argv[1];
+      // print petitions to file
+      if(*argv[2] == 'p')
+            return !pet_connect(s_path, PRINT_PET, 0, argv[3]);
+      // create, sign, unsign, remove need 2 additional args
       // create petition
       if(*argv[2] == 'c')
             return !pet_connect(s_path, CREATE_PET, 0, argv[3]);

@@ -118,7 +118,7 @@ int print_sigs(FILE* fp, struct petition_container* pc){
                   fputs("** this petition has been restored from a backup **\n", fp);
             fprintf(fp, "petition #%i (%s) created by user %i:\n", i, pc->petitions[i]->label, pc->petitions[i]->creator);
             for(int j = 0; j < pc->petitions[i]->n; ++j)
-                  fprintf(fp, "  %i: %i\n", j, pc->petitions[i]->signatures[j]);
+                  fprintf(fp, "  %i: %i\n", j+1, pc->petitions[i]->signatures[j]);
       }
       return total_sigs;
 }

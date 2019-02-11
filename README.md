@@ -18,7 +18,7 @@ petitions can be signed, unsigned, created, removed (with the proper credentials
 
 #### usage:
 ```sh
-./pea socket_file list                     # list available petitions
+./pea socket_file print print_filepath    # print all petitions and signatures to print_filepath
 ./pea socket_file sign list_item           # sign petition
 ./pea socket_file create petition_name     # create new petition
 ./pea socket_file remove list_item         # remove petition
@@ -37,6 +37,7 @@ petitions can be signed, unsigned, created, removed (with the proper credentials
 * ~~add README~~
 * ~~add unsign functionality~~
 * ~~backup to file~~
-* rename list to printfile, add list command that prints petitions locally
+* ~~rename list to printfile, add list command that prints petitions locally~~
+* return error numbers to client after command execution
 * use less precision for pet_option in packed integer to make more room for petition indices
 * fix undefined behavior in remove_p and remove_sig
