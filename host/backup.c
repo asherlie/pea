@@ -6,20 +6,6 @@
 #include <sys/types.h>
 #include <string.h>
 
-/*
- * TODO:
- * create backups every 20 seconds if entries have changed
- * with permissions 0444 - pea_h will either be started with an optional arg
- * for a file backup or this will be suggested by a user with import clientsi
- * de command with a filepath to the backup file
- *
- * this will create a petition that is marked off (automatically generated pet
- * ition). once signed by all creators of petitions in backup file, this pet
- * will be deleted or marked as complete. each entry will say # of total requi
- * red to merge the petition file with the current pc*
- *
- */
-
 // TODO: merge_pet should possibly free src
 int merge_pet(struct petition_container* dest, struct petition_container* src){
       int nsigs = 0;
