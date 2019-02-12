@@ -1,11 +1,15 @@
 /*
- * ~PEA~
+ *    @%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@
+ *    @            =====                @
+ *    @            |PEA|                @
+ *    @            =====                @
+ *    @  Pea                 Pea        @
+ *    @  Enables     OR      Expresses  @
+ *    @  Amendment           Annoyance  @
+ *    @                                 @
+ *    @                                 @
+ *    *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@
  *
- * Pea                 Pea
- * Enables     OR      Expresses
- * Amendment           Annoyance
- *
- * OR
  *
  */
 
@@ -23,8 +27,6 @@
 #include <sys/un.h>
 
 #include <syslog.h>
-
-#include <fcntl.h>
 
 #include "backup.h"
 
@@ -64,16 +66,10 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                         free(pc->petitions[pet_num]->restore);
                         pc->petitions[pet_num]->restore = NULL;
                   }
-                  #if DEBUG
-                  printf("signature from user: %i added to petition %i\n", cred.uid, pet_num);
-                  #endif
                   break;
             case CREATE_PET:
                   update_pf = 1;
                   insert_p(alloc_p(), pc, cred.uid, str_arg);
-                  #if DEBUG
-                  printf("new petition created by user: %i\n", cred.uid);
-                  #endif
                   break;
             case RM_PET:
                   // checking for out of bounds issues and credentials
