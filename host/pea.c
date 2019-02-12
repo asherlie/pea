@@ -182,8 +182,8 @@ int main(int argc, char** argv){
             return 1;
       }
       pet_f_pth = argv[2];
-      if(*pet_f_pth != '/'){
-            puts("petition output file must be a complete filepath");
+      if(*argv[1] != '/' || *pet_f_pth != '/'){
+            puts("socket file and petition output file must be complete filepaths");
             return 1;
       }
       // why open a useless file in case of DEBUG

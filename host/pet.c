@@ -49,11 +49,11 @@ _Bool remove_p(struct petition_container* pc, int index){
        * not bothering with reallocating when we could just shift the
        * latter part of the struct petition** left
        */
-      // memmove for overlapping mem
       free(pc->petitions[index]->signatures);
       pc->petitions[index]->signatures = NULL;
       free(pc->petitions[index]);
       pc->petitions[index] = NULL;
+      // memmove for overlapping mem
       memmove(&pc->petitions[index], &pc->petitions[index+1], sizeof(struct petition*)*((pc->n--)-index-1));
       return 1;
 }
