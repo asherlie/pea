@@ -33,13 +33,24 @@
 char* pet_f_pth = NULL;
 struct petition_container* pc;
 
-// TODO: pet_handler should return meaningful errno
-int pet_handler(int p_sock, int packed_int, char* str_arg){
+uid_t get_peer_cred(int p_sock){
+      uid_t uid;
+      #ifdef SO_PEERCRED
       socklen_t len = sizeof(struct ucred);
       struct ucred cred;
       memset(&cred, 0, sizeof(struct ucred));
       getsockopt(p_sock, SOL_SOCKET, SO_PEERCRED, &cred, &len);
+      uid = cred.uid;
+      #else
+      gid_t gid;
+      getpeereid(p_sock, &uid, &gid);
+      #endif
+      return uid;
+}
 
+// TODO: pet_handler should return meaningful errno
+int pet_handler(int p_sock, int packed_int, char* str_arg){
+      uid_t p_uid = get_peer_cred(p_sock);
       // splitting our packed int
       int operation = packed_int & 0xffff;
       int pet_num = (packed_int >> 16) & 0xffff;
@@ -59,7 +70,7 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   // TODO: abstract this to a function in backup.c
                   // add_signature will return 1 if we can import pc->petitions[pet_num]->restore
                   // update_pf will be set to whether or not petition has been inserted successfully
-                  if(add_signature(pc->petitions[pet_num], cred.uid, &update_pf)){
+                  if(add_signature(pc->petitions[pet_num], p_uid, &update_pf)){
                         merge_pet(pc, pc->petitions[pet_num]->restore);
                         for(; pc->petitions[pet_num]->restore->n; remove_p(pc->petitions[pet_num]->restore, 0));
                         free(pc->petitions[pet_num]->restore->petitions);
@@ -69,18 +80,18 @@ int pet_handler(int p_sock, int packed_int, char* str_arg){
                   break;
             case CREATE_PET:
                   update_pf = 1;
-                  insert_p(alloc_p(), pc, cred.uid, str_arg);
+                  insert_p(alloc_p(), pc, p_uid, str_arg);
                   break;
             case RM_PET:
                   // checking for out of bounds issues and credentials
                   // only she who created a petition can remove it
-                  if(pet_num < 0 || pc->n <= pet_num || pc->petitions[pet_num]->creator != cred.uid)break;
+                  if(pet_num < 0 || pc->n <= pet_num || pc->petitions[pet_num]->creator != p_uid)break;
                   update_pf = 1;
                   remove_p(pc, pet_num);
                   break;
             case RM_SIG:
                   if(pet_num < 0 || pc->n <= pet_num)break;
-                  update_pf = remove_sig(pc->petitions[pet_num], cred.uid);
+                  update_pf = remove_sig(pc->petitions[pet_num], p_uid);
                   break;
             case IMPORT_PET:
                   update_pf = 1;
