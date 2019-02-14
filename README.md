@@ -29,7 +29,7 @@ petitions can be signed, unsigned, created, removed (with the proper credentials
 ```
 
 ## notes
-* PEA will only compile on linux machines. PEA is able to record signatures securely by avoiding relying on signers to report their own credentials. this is done by having the kernel report credentials through [AF_UNIX](https://linux.die.net/man/7/unix) sockets using [SO_PEERCRED](https://linux.die.net/man/7/socket)
+* ~~PEA will only compile on linux machines.~~ PEA is able to record signatures securely by avoiding relying on signers to report their own credentials. this is done by having the kernel report credentials through [AF_UNIX](https://linux.die.net/man/7/unix) sockets using [SO_PEERCRED](https://linux.die.net/man/7/socket) for linux and [getpeereid()](https://linux.die.net/man/3/getpeereid) otherwise if it is available
 * when a petition is removed, petition indices are shifted
 * PEA sends petition indices using 16 bits of precision. for this reason, PEA only supports indices up to 2^16 or 65,535
 
