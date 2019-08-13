@@ -1,7 +1,10 @@
-CXX=gcc
+CC=gcc
+CFLAGS=-Wall -Wextra -Wpedantic -Wno-unused-result -O3
 all: pea_h 
-pea_h:
-	$(CXX) pea.c pet.c backup.c -o pea_h -Wall -Wextra -Wpedantic -Wno-unused-result -O3
+
+pet.o: pet.c pet.h
+backup.o: backup.c backup.h pet.o
+pea_h: pea.c backup.o pet.o ../PET_OPT.h
 
 clean:
-	rm -f pea_h
+	rm -f pea_h *.o
